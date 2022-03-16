@@ -100,17 +100,17 @@ public class BytebinServer extends Jooby {
         AssetSource fourOhFour = path -> { throw new StatusCodeException(StatusCode.NOT_FOUND, "Not found"); };
 
         // serve index page or favicon, otherwise 404
-        assets("/*", new AssetHandler(wwwFiles, fourOhFour).setMaxAge(Duration.ofDays(1)));
+        assets("/paste/*", new AssetHandler(wwwFiles, fourOhFour).setMaxAge(Duration.ofDays(1)));
 
         // healthcheck endpoint
-        get("/health", ctx -> {
+        get("/paste/health", ctx -> {
             ctx.setResponseHeader("Cache-Control", "no-cache");
             return "{\"status\":\"ok\"}";
         });
 
         // metrics endpoint
         if (metrics) {
-            get("/metrics", new MetricsHandler());
+            get("/paste/metrics", new MetricsHandler());
         }
 
         // define route handlers
@@ -121,7 +121,7 @@ public class BytebinServer extends Jooby {
                     .setMethods("POST")
                     .setHeaders("Content-Type", "Accept", "Origin", "Content-Encoding", "Allow-Modification")));
 
-            post("/post", new PostHandler(this, postRateLimiter, rateLimitHandler, contentStorageHandler, contentLoader, contentTokenGenerator, maxContentLength, expiryHandler));
+            post("/paste/post", new PostHandler(this, postRateLimiter, rateLimitHandler, contentStorageHandler, contentLoader, contentTokenGenerator, maxContentLength, expiryHandler));
         });
 
         routes(() -> {
@@ -131,8 +131,8 @@ public class BytebinServer extends Jooby {
                     .setMethods("GET", "PUT")
                     .setHeaders("Content-Type", "Accept", "Origin", "Content-Encoding", "Authorization")));
 
-            get("/{id:[a-zA-Z0-9]+}", new GetHandler(this, readRateLimiter, rateLimitHandler, contentLoader));
-            put("/{id:[a-zA-Z0-9]+}", new PutHandler(this, putRateLimiter, rateLimitHandler, contentStorageHandler, contentLoader, maxContentLength, expiryHandler));
+            get("/paste/{id:[a-zA-Z0-9]+}", new GetHandler(this, readRateLimiter, rateLimitHandler, contentLoader));
+            put("/paste/{id:[a-zA-Z0-9]+}", new PutHandler(this, putRateLimiter, rateLimitHandler, contentStorageHandler, contentLoader, maxContentLength, expiryHandler));
         });
     }
 
