@@ -144,6 +144,7 @@ public final class Bytebin implements AutoCloseable {
                 (Content.MEGABYTE_LENGTH * config.getInt(Option.MAX_CONTENT_LENGTH, 10)),
                 expiryHandler
         ));
+        this.server.setContextPath("/pastes/");
         this.server.start();
 
         // schedule invalidation task
