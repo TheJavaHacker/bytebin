@@ -56,4 +56,3 @@ HEALTHCHECK --interval=1m --timeout=5s \
 
 # run the app
 CMD ["java", "-jar", "bytebin.jar"]
-EXPOSE 8080/tcp
